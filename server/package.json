@@ -1,0 +1,26 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "This project was bootstrapped with Fastify-CLI.",
+  "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node --test test/**/*.test.js",
+    "start": "fastify start -l info app.js",
+    "dev": "fastify start -w -l info -P app.js"
+  },
+  "keywords": [],
+  "author": "Lehi Alcantara",
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/autoload": "^5.0.0",
+    "@fastify/cors": "^8.0.0",
+    "@fastify/sensible": "^5.0.0",
+    "fastify": "^4.26.1",
+    "fastify-cli": "^6.3.0",
+    "fastify-plugin": "^4.0.0",
+    "natural": "^8.0.1"
+  }
+}
