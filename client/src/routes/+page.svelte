@@ -1,6 +1,6 @@
 <script lang="ts">
 	import TrackList from './TrackList.svelte';
-	import moodify from '$lib/images/moodify.webp';
+	import m2r from '$lib/images/m2r.webp';
 	import welcome_fallback from '$lib/images/svelte-welcome.png';
 
 	let trackList: { url: string; name: string, id: string, artist: string }[] = [];
@@ -24,7 +24,7 @@
 	<h1>
 		<span class="welcome">
 			<picture>
-				<source srcset={moodify} type="image/webp" />
+				<source srcset={m2r} type="image/webp" />
 				<img src={welcome_fallback} alt="Welcome" />
 			</picture>
 		</span>

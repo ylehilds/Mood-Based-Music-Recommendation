@@ -12,7 +12,7 @@
 	</main>
 
 	<footer>
-		<p>visit <a href="https://github.com/ylehilds/Moodify">https://github.com/ylehilds/Moodify</a> to learn about Moodify</p>
+		<p>visit <a href="https://github.com/ylehilds/Mood-Based-Music-Recommendation">https://github.com/ylehilds/Mood-Based-Music-Recommendation</a> to learn about Mood-Based-Music-Recommendation</p>
 	</footer>
 </div>
 

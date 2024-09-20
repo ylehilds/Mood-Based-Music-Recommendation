@@ -1,5 +1,5 @@
 {
-	"name": "moodify",
+	"name": "mood-based-music-recommendation",
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "vite dev",
