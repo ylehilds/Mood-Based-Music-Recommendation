@@ -1,54 +1,83 @@
 from machine import Pin
-from wifi import init_wifi
+import network
 import urequests
 import time
+import config
+import json
 
-init_wifi()
-
+# Button setup
 play_btn = Pin(16, Pin.IN, Pin.PULL_DOWN)
 pause_btn = Pin(2, Pin.IN, Pin.PULL_DOWN)
 skip_btn = Pin(15, Pin.IN, Pin.PULL_DOWN)
 
+# WiFi setup
+ssid = config.ssid
+password = config.password
 
+wlan = network.WLAN(network.STA_IF)
+wlan.disconnect()
+wlan.active(True)
+wlan.connect(ssid, password)
+
+# Wait for WiFi connection with a timeout
+MAX_RETRIES = 10
+retries = 0
+
+while not wlan.isconnected() and retries < MAX_RETRIES:
+    print("Connecting to WiFi...")
+    retries += 1
+    time.sleep(1)
+
+if wlan.isconnected():
+    print('Connection successful')
+    print(wlan.ifconfig())
+else:
+    print("Failed to connect to WiFi")
+    raise RuntimeError("WiFi connection failed")
+
+# Function to trigger IFTTT events
+def send_ifttt_event(event_name):
+    try:
+        request_url = f'https://maker.ifttt.com/trigger/{event_name}/with/key/{config.ifttt_key}'
+        res = urequests.post(request_url)
+        print(res.text)
+        res.close()  # Free up resources by closing the response
+    except Exception as e:
+        print(f"Error sending {event_name}: {e}")
+
+# Button action functions
 def play():
-    request_url = 'https://maker.ifttt.com/trigger/spotify_play/with/key/[your_key_here]'
-    res = urequests.post(request_url)
-    # print response from IFTTT.
-    print(res.text)
-
+    send_ifttt_event('spotify_play')
 
 def pause():
-    request_url = 'https://maker.ifttt.com/trigger/spotify_pause/with/key/[your_key_here]'
-    res = urequests.post(request_url)
-    # print response from IFTTT.
-    print(res.text)
-
+    send_ifttt_event('spotify_pause')
 
 def skip():
-    request_url = 'https://maker.ifttt.com/trigger/spotify_skip/with/key/[your_key_here]'
-    res = urequests.post(request_url)
-    # print response from IFTTT.
-    print(res.text)
+    send_ifttt_event('spotify_skip')
 
+# Debounce time in seconds
+DEBOUNCE_TIME = 0.25
 
 try:
     while True:
-        if play_btn():
-            print('play btn')
+        if play_btn.value():
+            print('play btn pressed')
             play()
-            time.sleep(0.25)
-        if pause_btn():
-            print('pause btn')
+            time.sleep(DEBOUNCE_TIME)  # Debouncing
+
+        if pause_btn.value():
+            print('pause btn pressed')
             pause()
-            time.sleep(0.25)
-        if skip_btn():
+            time.sleep(DEBOUNCE_TIME)  # Debouncing
+
+        if skip_btn.value():
+            print('skip btn pressed')
             skip()
-            print('skip')
-            time.sleep(0.25)
+            time.sleep(DEBOUNCE_TIME)  # Debouncing
 
 except Exception as e:
     print(e)
-    request_url = 'https://maker.ifttt.com/trigger/error/with/key/[your_key_here]'
-    post_data = ujson.dumps({"value1": str(e)})
-    urequests.post(request_url, headers={
-        'content-type': 'application/json'}, data=post_data)
+    # Error notification via IFTTT
+    request_url = f'https://maker.ifttt.com/trigger/error/with/key/{config.ifttt_key}'
+    post_data = json.dumps({"value1": str(e)})
+    urequests.post(request_url, headers={'content-type': 'application/json'}, data=post_data)
